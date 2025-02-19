@@ -1,0 +1,75 @@
+#docker image
+image:
+  repository: "martinez1111/payment-app" 
+  tag: "latest"
+  pullPolicy: Always # "Always" for development purposes, not recomended on prod
+
+replicaCount: 2 #replica numbers
+
+# PersistanceVolume for h2-database
+persistence:
+  enabled: true 
+  accessMode: ReadWriteMany # allows for concurrent operations for multiple pods
+  storageSize: 1Gi # reserves 1GB disk space
+
+# overriding kafka default values
+kafka:
+  bootstrapServers: transaction-service-broker-headless.default.svc.cluster.local:9092
+  allow.auto.create.topics: false # turning off auto topic creation
+  zookeeper:
+    enabled: true
+    replicaCount: 1
+    auth:
+      enabled: false
+  controller:
+    enabled: false
+    replicaCount: 0
+    controllerOnly: false
+  broker:
+    replicaCount: 3 
+    extraConfig: |- # message expiration config in miliseconds
+      log.retention.ms: 60000
+      log.retention.check.interval.ms: 300000
+  kraft:
+    enabled: false
+  listeners:
+    client:
+      containerPort: 9092
+      protocol: PLAINTEXT # turn off authentication
+    configurationOverrides:
+      advertised.listeners: CLIENT://${env.HOSTNAME}.transaction-service-kafka-headless.default.svc.cluster.local:9092,INTERNAL://localhost:9094 # broker uses first one to advertise, second one is used for communication with other brokers
+    listenerSecurityProtocolMap: "CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT"
+  sasl:
+    enabledMechanisms: "PLAIN" # turn off authentication
+    
+predefinedTopics: # configuration for Kafka topics name
+  completed:
+    name: transakcje-zrealizowane
+  expired:
+    name: transakcje-przeterminowane
+
+# service values
+service:
+  type: ClusterIP
+  name: http
+  port: 80
+  targetPort: 8080
+
+# ingres values
+ingress: 
+  enabled: true
+  hostname: "transaction-service.local" # field for setting address and domain, need to define new hostname in "etc/host" file
+  annotations: {
+        # annotations for turn off cache for development and testing purposes 
+        nginx.ingress.kubernetes.io/proxy-cache-bypass: "true",
+        nginx.ingress.kubernetes.io/cache-control: "no-cache"
+  }
+
+
+resources:
+  limits: # resource limits
+    cpu: 500m # 500 milicore CPU (0.25 core)
+    memory: 512Mi # 512 megabytes of RAM
+  requests: # resource requirements
+    cpu: 250m # 250 milicore CPU (0.25 core)
+    memory: 256Mi # 256 megabytes of RAM

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openapi-file
+  annotations:
+    checksum/config: {{ .Files.Get "/openapi/openapi.yaml" | sha256sum }}
+data:
+  openapi.yaml: |
+    {{ .Files.Get "/openapi/openapi.yaml" | nindent 4 }}

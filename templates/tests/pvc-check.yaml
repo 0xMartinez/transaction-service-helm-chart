@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "transaction-service.fullname" . }}-pvc-check
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: pvc-test
+      image: alpine:3.18
+      command: ['sh', '-c']
+      args:
+        - |
+          apk add --no-cache bash
+          if [ -d /data/db ]; then
+            echo "PVC zamontowany poprawnie"
+            exit 0
+          else
+            echo "Błąd: PVC nie zamontowany"
+            exit 1
+          fi
+      volumeMounts:
+        - name: h2-data
+          mountPath: /data/db
+  volumes:
+    - name: h2-data
+      persistentVolumeClaim:
+        claimName: {{ include "transaction-service.fullname" . }}-pvc
+  restartPolicy: Never

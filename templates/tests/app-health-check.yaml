@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "transaction-service.fullname" . }}-app-health-check
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: health-check
+      image: curlimages/curl:8.6.0
+      command: ['sh', '-c', 'curl -s --fail http://{{ include "transaction-service.fullname" . }}:/actuator/health | grep "UP"']
+  restartPolicy: Never
