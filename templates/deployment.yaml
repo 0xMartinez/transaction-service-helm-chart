@@ -15,7 +15,7 @@ spec:
         app: {{ include "transaction-service.name" . }}
     spec:
       containers:
-      - name: spring-kafka-app
+      - name: transaction-service
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         volumeMounts:
             - name: h2-data
@@ -34,8 +34,6 @@ spec:
             value: "{{ .Values.predefinedTopics.completed.name}}"
           - name: EXPIRED_TOPIC
             value: "{{ .Values.predefinedTopics.expired.name}}"
-          - name: SOAP_ENDPOINT
-            value: "http://{{ .Values.ingress.hostname }}/ws"
       volumes:
         - name: h2-data
           persistentVolumeClaim:
