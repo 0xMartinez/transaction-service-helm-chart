@@ -14,7 +14,7 @@ persistence:
 
 # overriding kafka default values
 kafka:
-  bootstrapServers: transaction-service-broker-headless.default.svc.cluster.local:9092
+  bootstrapServers: transaction-service-kafka-broker-headless.default.svc.cluster.local:9092
   allow.auto.create.topics: false # turning off auto topic creation
   zookeeper:
     enabled: true
@@ -26,7 +26,7 @@ kafka:
     replicaCount: 0
     controllerOnly: false
   broker:
-    replicaCount: 3 
+    replicaCount: 2
     extraConfig: |- # message expiration config in miliseconds
       log.retention.ms: 60000
       log.retention.check.interval.ms: 300000
