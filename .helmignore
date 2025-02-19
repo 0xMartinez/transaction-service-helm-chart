@@ -11,6 +11,7 @@
 .hgignore
 .svn/
 charts/
+Chart.lock
 # Common backup files
 *.swp
 *.bak
