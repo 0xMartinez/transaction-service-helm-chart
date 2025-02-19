@@ -1,7 +1,6 @@
-
 {{- define "transaction-service.fullname" -}}
-{{ .Release.Name }}
-{{- end }}
+{{- printf "%s-%s" .Release.Name .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 
 {{/*

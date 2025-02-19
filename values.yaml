@@ -8,7 +8,8 @@ replicaCount: 2 #replica numbers
 
 # PersistanceVolume for h2-database
 persistence:
-  enabled: true 
+  enabled: true
+  accessModes: ReadWriteMany
   accessMode: ReadWriteMany # allows for concurrent operations for multiple pods
   storageSize: 1Gi # reserves 1GB disk space
 
@@ -28,8 +29,8 @@ kafka:
   broker:
     replicaCount: 2
     extraConfig: |- # message expiration config in miliseconds
-      log.retention.ms: 60000
-      log.retention.check.interval.ms: 300000
+      log.retention.ms: 300000
+      log.retention.check.interval.ms: 60000
   kraft:
     enabled: false
   listeners:

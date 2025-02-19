@@ -4,7 +4,7 @@ metadata:
   name: {{ include "transaction-service.fullname" . }}-pvc
 spec:
   accessModes:
-    - ReadWriteMany
+    - {{ .Values.persistence.accessModes }}
   resources:
     requests:
       storage: {{ .Values.persistence.storageSize }}
