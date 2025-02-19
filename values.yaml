@@ -9,8 +9,8 @@ replicaCount: 2 #replica numbers
 # PersistanceVolume for h2-database
 persistence:
   enabled: true
-  accessModes: ReadWriteMany
-  accessMode: ReadWriteMany # allows for concurrent operations for multiple pods
+  accessModes:
+    - ReadWriteMany # allows for concurrent operations for multiple pods
   storageSize: 1Gi # reserves 1GB disk space
 
 # overriding kafka default values
