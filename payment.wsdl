@@ -1,0 +1,98 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:tns="http://example.com/payment"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="http://example.com/payment"
+             name="PaymentService">
+    <types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    targetNamespace="http://example.com/payment"
+                    elementFormDefault="qualified">
+            <xsd:element name="CreatePaymentRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="amount" type="xsd:string"/>
+                        <xsd:element name="currency" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="CreatePaymentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="transactionId" type="xsd:long"/>
+                        <xsd:element name="transactionStatus" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="CorrectPaymentRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="transactionId" type="xsd:long"/>
+                        <xsd:element name="correctionAmount" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="CorrectPaymentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="correctionAmount" type="xsd:string"/>
+                        <xsd:element name="transactionStatus" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <message name="CreatePaymentRequest">
+        <part name="parameters" element="tns:CreatePaymentRequest"/>
+    </message>
+    <message name="CreatePaymentResponse">
+        <part name="parameters" element="tns:CreatePaymentResponse"/>
+    </message>
+
+    <message name="CorrectPaymentRequest">
+        <part name="parameters" element="tns:CorrectPaymentRequest"/>
+    </message>
+    <message name="CorrectPaymentResponse">
+        <part name="parameters" element="tns:CorrectPaymentResponse"/>
+    </message>
+
+    <portType name="PaymentServicePortType">
+        <operation name="CreatePayment">
+            <input message="tns:CreatePaymentRequest"/>
+            <output message="tns:CreatePaymentResponse"/>
+        </operation>
+        <operation name="CorrectPayment">
+            <input message="tns:CorrectPaymentRequest"/>
+            <output message="tns:CorrectPaymentResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="PaymentServiceBinding" type="tns:PaymentServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CreatePayment">
+            <soap:operation soapAction="http://example.com/payment/CreatePayment"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="CorrectPayment">
+            <soap:operation soapAction="http://example.com/payment/CorrectPayment"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="PaymentService">
+        <port name="PaymentServicePort" binding="tns:PaymentServiceBinding">
+            <soap:address location="http://localhost:8080/ws"/>
+        </port>
+    </service>
+</definitions>

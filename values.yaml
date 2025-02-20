@@ -45,9 +45,9 @@ kafka:
     
 predefinedTopics: # configuration for Kafka topics name
   completed:
-    name: transakcje-zrealizowane2
+    name: transakcje-zrealizowane
   expired:
-    name: transakcje-przeterminowane2
+    name: transakcje-przeterminowane
 
 # service values
 service:

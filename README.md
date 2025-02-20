@@ -10,7 +10,7 @@ Domyślnie ustawionym adresem jest:
 ```
 hostname: "transaction-service.local"
 ```
-Aplikacja domyślnie tworzy dwa topiki o nazwach wskazanych w values.yaml i przekazuje je do aplikacji Spring przez zmienne środowiskowe zdefiniowane w deployments.yaml: 
+Aplikacja domyślnie tworzy dwa topiki o nazwach wskazanych w values.yaml i przekazuje je do aplikacji Spring przez zmienne środowiskowe zdefiniowane w deployments.yaml. Topiki tworzone są automatycznie podczas startu aplikacji, dlatego może zdarzyć się sytuacja w której po starcie/upgrade aplikacji przez chwilę lista dostępnmych topików będzie pusta: 
 ```
 predefinedTopics: # configuration for Kafka topics name
   completed:
@@ -25,13 +25,13 @@ Dotatkowo w kontekście topików, została dodana funkcjonalość "expirowania" 
       log.retention.ms: 300000
       log.retention.check.interval.ms: 60000
 ```
-Sama Kafka działa w oparciu o architekturę z zookeeperem. Wszystkie niezbędne wartości wymagające nadpisania oryginalnej konfiguracji, zostały nadpisane w pliku values.yaml. 
+Sama Kafka działa w oparciu o architekturę z zookeeperem i 2 brokerami. Dla poprawy czytelności logów oraz aby niepotrzebnie nie rzucać wyjątkami podczas startu aplikacji, użyty został initContainers czekający na wstanie brokerów kafki. Wszystkie niezbędne wartości wymagające nadpisania oryginalnej konfiguracji, zostały nadpisane w pliku values.yaml. 
 Ponieważ domyślnie aplikacja posiada wbudowaną baze danych h2, która w domyślnym trybie jest wbudowana w środowisko aplikacji, potrzebne było zdefiniowanie pvc oraz przestawienie bazy danych w tryb "Server Mode" w celu zdalnego używania bazy danych przez api.
 Pozostanie w domyślnym trybie Embedded z wiecej niż jedną repliką aplikacji powodowało, że naprzemiennie w użyciu były 2 odrębne bazy danych.
 
 Poprzez ingress zostały udostępnione endpoint dla wszystkich funkcjonalności (prezentowane wartości, zmienią sie po edycji hostname):
 * api do zarządzania transakcjami poprzez swagger: [http://transaction-service.local/swagger-ui/index.html]
-* api do zarządzania płatnościami poprzez soap: [http://transaction-service.local/ws]
+* api do zarządzania płatnościami poprzez soap (plik .wsdl został dołączony w głownym katalogu): [http://transaction-service.local/ws]
 * actuator (dodany na etapie developmentu helm chartu, użyty do testów, w celu weryfikacji czy aplikacja "wstała" poprawnie): [http://transaction-service.local/actuator/health]
 * plik openapi.yaml zawierający definicję wystawionego REST API: [http://transaction-service.local/openapi/openapi.yaml]
 * dodatkowo aplikacja udostępnia endpoint konsoli (tutaj konfiguracja ingress nie była wymagana), wymagany jest port forwarding: [http://localhost:8080/h2-console]
@@ -48,7 +48,7 @@ Instrukcja uruchomienia
 ```
 minikube tunnel
 ```
-* dodaj hostname razem z adresem 1.0.0.127 (domyślnie: transaction-service.local) w celu zasymulowania zewnętrznych usług
+* dodaj hostname razem z adresem localhosta (domyślnie: 1.0.0.127 transaction-service.local) w celu zasymulowania zewnętrznych usług
 * pobierz i zbuduj subchart Kafki
 ```
 helm dependency build
@@ -59,7 +59,7 @@ helm install transaction-service . -f values.yaml
 ```
 * w razie edycji wartości użyj aby wczytać nowododane dane:
 ```
-helm  upgrade --install transaction-service .
+helm  upgrade --install transaction-service . -f values.yaml
 ```
 * upewnij się że wszystkie pody wstały, następnie uruchom testy:
 ```

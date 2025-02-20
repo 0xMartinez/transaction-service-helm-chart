@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "transaction-service.fullname" . }}-kafka-topic-cleaner
+  name: {{ include "transaction-service.fullname" . }}-{{ .Release.Revision }}-kafka-topic-cleaner
   labels:
     app.kubernetes.io/name: "{{ include "transaction-service.name" . }}"
     helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
