@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "transaction-service.fullname" . }}-kafka-topic-cleaner
+  labels:
+    app.kubernetes.io/name: "{{ include "transaction-service.name" . }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/managed-by: "Helm"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: kafka-topic-cleaner
+          image: "bitnami/kafka:3.9.0"
+          command: [ "/bin/sh", "-c" ]
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: "{{ .Values.kafka.bootstrapServers }}"
+            - name: COMPLETED_TOPIC
+              value: "{{ .Values.predefinedTopics.completed.name }}"
+            - name: EXPIRED_TOPIC
+              value: "{{ .Values.predefinedTopics.expired.name }}"
+          args:
+            - "-c"
+            - |
+              echo "=== Kafka Topic Cleaner Job ==="
+              
+              ALL_TOPICS=$(/opt/bitnami/kafka/bin/kafka-topics.sh --list --bootstrap-server "$BOOTSTRAP_SERVERS")
+              echo "=== Lista topiców w klastrze ==="
+              echo "$ALL_TOPICS"
+
+              for TOPIC in $ALL_TOPICS; do
+                case $TOPIC in
+                  __*|_*)
+                    echo "Pomijam systemowy topic: $TOPIC"
+                    ;;
+                  $COMPLETED_TOPIC|$EXPIRED_TOPIC)
+                    echo "Pomijam dozwolony topic: $TOPIC"
+                    ;;
+                  *)
+                    echo "Usuwam topic: $TOPIC"
+                    /opt/bitnami/kafka/bin/kafka-topics.sh --delete --topic "$TOPIC" --bootstrap-server "$BOOTSTRAP_SERVERS"
+                    ;;
+                esac
+              done
+              echo "=== Czyszczenie zakończone ==="
