@@ -46,8 +46,8 @@ należy przejść w tryb server mode, url: jdbc:h2:file:/data/db/mydb;AUTO_SERVE
 
 Instrukcja uruchomienia
 -------------------------------
-* wystartuj kontener kubernetes
-* włącz tunnelowania (przykład)
+* wystartuj lokalny klaster Kubernetes
+* włącz tunnelowania w celu uzyskania dostępu do wnętrza klastra (przykład)
 ```
 minikube tunnel
 ```
