@@ -5,7 +5,10 @@ Helm chart pozwala na uruchomienie aplikacji w klastrze Kubernetes i jest zgodny
 Wszystkie zmienne wymagające jakiejkolwiek edycji zostały zawarte w pliku values.yaml.
 W celu zapewnienia wysokiej dostępności alikacja jest uruchamiana w 2 instancjach.
 
-Wdrożona aplikacja pozwala na edytowanie adresu oraz domeny klastra. Przy pierwszym uruchomieniu oraz przy każdorazowej zmianie adresu/domeny należy dodać wpis do pliku etc/hosts lączący nowy hostname z adresem 1.0.0.127 (localhost).
+Wdrożona aplikacja pozwala na edytowanie adresu oraz domeny klastra. Przy pierwszym uruchomieniu oraz przy każdorazowej zmianie adresu/domeny należy dodać wpis do pliku etc/hosts lączący nowy hostname z adresem 1.0.0.127 (localhost):
+```
+1.0.0.127 transaction-service.local
+```
 Domyślnie ustawionym adresem jest:
 ```
 hostname: "transaction-service.local"
