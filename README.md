@@ -22,8 +22,8 @@ W sytuacji kiedy wykonywany jest install/upgrade istniejącego wdrożenia, uruch
 Dotatkowo w kontekście topików, została dodana funkcjonalość "expirowania" wiadomości w topikach kafki. Wartości również znajdują się w values.yaml:
 ```
     extraConfig: |- # message expiration config in miliseconds
-      log.retention.ms: 60000
-      log.retention.check.interval.ms: 300000
+      log.retention.ms: 300000
+      log.retention.check.interval.ms: 60000
 ```
 Sama Kafka działa w oparciu o architekturę z zookeeperem. Wszystkie niezbędne wartości wymagające nadpisania oryginalnej konfiguracji, zostały nadpisane w pliku values.yaml. 
 Ponieważ domyślnie aplikacja posiada wbudowaną baze danych h2, która w domyślnym trybie jest wbudowana w środowisko aplikacji, potrzebne było zdefiniowanie pvc oraz przestawienie bazy danych w tryb "Server Mode" w celu zdalnego używania bazy danych przez api.
