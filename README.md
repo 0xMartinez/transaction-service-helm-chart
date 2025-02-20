@@ -10,7 +10,6 @@ Domyślnie ustawionym adresem jest:
 ```
 hostname: "transaction-service.local"
 ```
-Aplikacja ma wyłączone automatyczne generowanie topików Kafki. 
 Aplikacja domyślnie tworzy dwa topiki o nazwach wskazanych w values.yaml i przekazuje je do aplikacji Spring przez zmienne środowiskowe zdefiniowane w deployments.yaml: 
 ```
 predefinedTopics: # configuration for Kafka topics name
@@ -19,6 +18,7 @@ predefinedTopics: # configuration for Kafka topics name
   expired:
     name: transakcje-przeterminowane
 ```
+W sytuacji kiedy wykonywany jest install/upgrade istniejącego wdrożenia, uruchamiany jest job czyszczący topiki Kafki nie będące zdefiniowane w values.yaml
 Dotatkowo w kontekście topików, została dodana funkcjonalość "expirowania" wiadomości w topikach kafki. Wartości również znajdują się w values.yaml:
 ```
     extraConfig: |- # message expiration config in miliseconds
@@ -61,7 +61,7 @@ helm install transaction-service . -f values.yaml
 ```
 helm  upgrade --install transaction-service .
 ```
-* uruchom testy:
+* upewnij się że wszystkie pody wstały, następnie uruchom testy:
 ```
 helm test transaction-service
 ```

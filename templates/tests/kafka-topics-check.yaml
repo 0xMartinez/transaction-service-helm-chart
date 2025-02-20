@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: kafka-check
-      image: bitnami/kafka:3.7
+      image: bitnami/kafka:3.9.0
       command: ['sh', '-c']
       args:
         - |

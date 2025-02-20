@@ -16,7 +16,7 @@ persistence:
 # overriding kafka default values
 kafka:
   bootstrapServers: transaction-service-kafka-broker-headless.default.svc.cluster.local:9092
-  allow.auto.create.topics: false # turning off auto topic creation
+  allow.auto.create.topics: true
   zookeeper:
     enabled: true
     replicaCount: 1
@@ -45,9 +45,9 @@ kafka:
     
 predefinedTopics: # configuration for Kafka topics name
   completed:
-    name: transakcje-zrealizowane
+    name: transakcje-zrealizowane2
   expired:
-    name: transakcje-przeterminowane
+    name: transakcje-przeterminowane2
 
 # service values
 service:

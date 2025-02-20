@@ -14,6 +14,17 @@ spec:
       labels:
         app: {{ include "transaction-service.name" . }}
     spec:
+      initContainers:
+        - name: wait-for-kafka
+          image: busybox:1.35
+          command: [ 'sh', '-c' ]
+          args:
+            - |
+              echo "Waiting for Kafka..."
+              while ! nc -z transaction-service-kafka-broker-headless.default.svc.cluster.local:9092; do
+                sleep 5;
+              done
+              echo "Kafka jest gotowa!"
       containers:
       - name: transaction-service
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -32,9 +43,9 @@ spec:
           - name: SPRING_DATASOURCE_URL
             value: "jdbc:h2:file:/data/db/mydb;AUTO_SERVER=TRUE"
           - name: COMPLETED_TOPIC
-            value: "{{ .Values.predefinedTopics.completed.name}}"
+            value: "{{ .Values.predefinedTopics.completed.name }}"
           - name: EXPIRED_TOPIC
-            value: "{{ .Values.predefinedTopics.expired.name}}"
+            value: "{{ .Values.predefinedTopics.expired.name }}"
       volumes:
         - name: h2-data
           persistentVolumeClaim:
